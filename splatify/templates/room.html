@@ -1,0 +1,21 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <title>Splatify - Choose a Splatter</title>
+</head>
+<body>
+    <h2 style="color:white">Choose someone to Splat with:</h2>
+
+    {% for splatter in users %}
+    {% if splatter.username == "115328500" %}:
+    <a href="{% url 'splat' splatter.id %}"><h2>suli_rashid</h2></a>
+    {% else %}
+    <a href="{% url 'splat' splatter.id %}"><h2>{{splatter.username}}</h2></a>
+    {% endif %}
+    {% endfor %}
+</body>
+</html>

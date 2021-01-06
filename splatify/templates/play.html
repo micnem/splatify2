@@ -1,0 +1,79 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <title>Splat!</title>
+</head>
+<body>
+    <h2>Enjoy!</h2>
+
+<!-- Load the Spotify Web Playback SDK -->
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
+
+
+
+<script type="text/javascript"> 
+    var auth_token = '{{request.user.profile.account.social_auth.first.extra_data.access_token}}'; 
+    var playlist_uri = 'spotify:playlist:{{playlist_id}}'
+    console.log(playlist_uri)
+    window.onSpotifyWebPlaybackSDKReady = () => {
+        
+        // Define the Spotify Connect device, getOAuthToken has an actual token 
+        // hardcoded for the sake of simplicity
+    
+        var player = new Spotify.Player({
+          name: 'Splatify',
+          getOAuthToken: callback => {
+            callback(auth_token);
+          },
+          volume: 0.1
+        });
+    
+        // Called when connected to the player created beforehand successfully
+        player.addListener('ready', ({ device_id }) => {
+          console.log('Ready with Device ID', device_id);
+    
+          const play = ({
+            spotify_uri,
+            playerInstance: {
+              _options: {
+                getOAuthToken,
+                id
+              }
+            }
+          }) => {
+            getOAuthToken(access_token => {
+              fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({ context_uri: spotify_uri }),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${access_token}`
+                },
+              });
+            });
+          };
+    
+          play({
+            playerInstance: player,
+            spotify_uri: playlist_uri,
+            
+          });
+          
+        });
+    
+        // Connect to the player created beforehand, this is equivalent to 
+        // creating a new device which will be visible for Spotify Connect
+        player.connect();
+      };
+    
+
+</script> 
+
+
+
+</body>
+</html>
