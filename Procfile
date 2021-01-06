@@ -1,0 +1,1 @@
+web: gunicorn splatify2.wsgi --log-file -
